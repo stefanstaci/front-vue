@@ -1,7 +1,9 @@
 <template>
   <div class="container">
     <div>
-      <p>{{products}}</p>
+      <h2>{{products.title}}</h2>
+      <h3>description: {{products.description}}</h3>
+      <h3>price: {{products.price}} $</h3>
     </div>
     <table class="table table-striped table-bordered">
       <thead>
@@ -11,7 +13,7 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="comment in comments" :key="comment.id">
+      <tr v-for="comment in products.comment" :key="comment.id">
         <td>{{ comment.content }}</td>
       </tr>
       </tbody>
@@ -29,9 +31,9 @@
 import AXIOS from "@/service/AxiosService";
 // import router from "@/router";
 // import { ref} from 'vue';
-import {useRoute} from "vue-router";
+// import {useRoute} from "vue-router";
 
-const route = useRoute();
+// const route = useRoute();
 // const product = ref({});
 
 
@@ -45,19 +47,12 @@ export default {
       content: '',
     }
   },
-//  async onMounted(){
-//     await AXIOS.get(`/products/${route.params.id}`).then(({data}) => {
-//     product.value = data
-//   })
-// },
-  // created() {
-  //   const product = product.find(product => product.id == this.$route.params.id)
-  // },
 
   async mounted() {
-     this.products = await AXIOS.get(`/products/${route.params.id}`)
+     this.products = await AXIOS.get("/products/" + this.$route.params.id)
         .then(response => response.data)
-    console.log(this.products)
+    console.log(this.products);
+
   },
   methods: {
     async addComment() {
@@ -65,7 +60,7 @@ export default {
           '/comment/new',
           {
             content: this.content,
-            id: this.product.id
+            productId: this.products.id
           }, {
             headers: {"Content-Type": "application/json"}
           })
